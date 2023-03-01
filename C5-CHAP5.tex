@@ -1,6 +1,9 @@
-\chapter{远程入侵与防御措施}
+\chapter{仿真实验风险评估和远程入侵渗透测试}
 \label{ch5}
-\section{远程入侵流程概述}
+\section{实验环境}
+本章节首先将介绍某款智能网联汽车上的可利用漏洞信息，以及通过Isograph AttackTree+对其进行安全威胁建模并对其进行风险评估的实例。
+其次通过远程入侵渗透测试实现远程获取汽车信息和控制汽车。
+\subsection{实验对象}
 实验环境包括某知名品牌汽车一台，装有车联网App安卓手机一部，Windows系统电脑和无线路由器一台。软件环境：手机环境为安卓5.9.1，手机智能互联APP）。
 汽车已经具有网联远控的功能，在第四章提出的实例威胁建模后，我们对它进行了一个基于模型的仿真实验，结果表明，目前 ICV的应用还存在很多安全隐患。
 
@@ -9,8 +12,44 @@
     \includegraphics[scale=0.5]{resources/img/i14.png}
     \caption{测试车辆}
   \end{figure}
+\subsection{车辆内部架构}
+\subsection{实验工具}  
 
-整体的流程如图 5.2所示。大致分为蓝牙信号截取、请求伪造、和逆向工程
+Isograph Attack+ 是著名的安全行业Isograph公司推出的基于攻击树的系统漏洞建模工具。该软件通过建立系统漏洞模型，利用威胁分析和攻击树提高安全性。构建旨在减少成功攻击的措施的图形表示，并使用缓解树。
+根据ISO 26262、ISO/SAE 21434、J3061、DO-356和ED-203等标准，该软件可以通过威胁分析和攻击树来确定系统易受攻击的位置，进而提高资产和IT系统的安全性。使用缓解树的图形化表示，我们能够快速构建模型，并且采用AttackTree的高级GUI特性进一步优化模型。此外，我们还可以链接到需求管理工具，如Jama Connect®，以进一步提高产品的安全性和可靠性。该公司产品自上世纪80年代以来一直处于不断的发展过程中，是安全和可靠性专业人士公认的标准。
+
+该软件具有以下优势和特色：
+
+\begin{itemize}
+  \item \textbf{可视化潜在的攻击场景：攻击树分析提供了一种以易于理解的图形方式对系统威胁进行建模的方法。如果我们了解系统受到攻击的方式，我们就可以制定对策来防止这些攻击实现其目标。}
+  \item \textbf{可以在其中快速构建和分析攻击树模型，并以易于理解的格式呈现结果。AttackTree 还允许用户定义量化攻击成本的指标、发动攻击的操作难度以及可能感兴趣的任何其他相关量化指标。}
+  \item \textbf{可以构建缓解树。其功能是用来构建减少攻击带来的影响因素。比如现实生活中公关部门如果通过有利良好的发言可以减缓银行抢劫带来的影响，反之则不然。我们通过构建缓解树模拟现实中这种情况。}    
+\end{itemize}
+\section{实验过程}
+我们通过Isograph AttackTree 实现攻击建模，流程如图5.2所示
+\subsection{攻击路径分析}
+攻击场景选择以远程恶意控制车辆作为攻击目标，其可能的
+攻击入口有六个，分别是从物理攻击、移动终端设备攻击、无线网络攻击、车载总线攻击、ECU攻击、汽车行车感知系统攻击等入口，
+\subsection{构建攻击树}
+使用Attack Tree 工具对上述攻击入口进行构建攻击树模型
+并编译，根节点定义为远程恶意控制车辆，叶子节点代表了攻击事件。
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.5]{resources/img/c51.png}
+  \caption{软件建模流程图}
+\end{figure}
+\section{实验结果分析}
+我们把攻击序列重新评分了一张表，并按照第四章提出的SATT威胁建模风险评估方法，求出了每个攻击序列的发生概率，再通过Attack Tree+ 编译结果如图5.3所示。
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.5]{resources/img/c52.jpg}
+  \caption{attack tree 仿真实验结果图}
+\end{figure}
+可以看到通过无线通信的攻击路径发生概率最大。由以上仿真实例可知，
+SATT安全威胁模型可以为风险评估人员提供更可靠的风险信息，使他们能够更方便地制定下一步的应对策略。
+\section{远程渗透及攻击测试}
+我们通过几个攻击入口试图对车辆进行远程渗透和攻击测试，
+整体的流程如图 5.4所示。大致分为蓝牙信号截取、请求伪造、和逆向工程
 几个步骤。实验用车经过多次测试，已经确定
 存在相关漏洞；首先在近距离通信使用蓝牙伪造请求攻击, 具体来说首先分析蓝牙协议配对握手协议，然后找到对应指令操作请求
 通过同一局域网PC进行伪造请求 从而达到远程控制智能网联汽车的目的；在逆
@@ -23,7 +62,7 @@
   \caption{漏洞挖掘和攻击步骤图}
 \end{figure}
 \newline
-\section {蓝牙近距离通信漏洞利用}
+\subsection {蓝牙近距离通信漏洞利用}
 蓝牙作为一种近距离数据交换的通信方式，也
 是恶意攻击者关注的一个攻击面。攻击者能够通过使用 Bluetooth技术，可以对车载的信息系统进行恶意的编码，以达到对车载网络进行入侵的目的。文献\cite{antian}
 利用蓝牙漏洞，开发出一款名为“BlueBorn”的攻
@@ -31,7 +70,7 @@
 近年来某些汽车厂商实现了所谓“蓝牙钥匙”的功能：
 使用汽车App开启手机钥匙后，手机便可以取代随车的遥控钥匙，进行解锁、上锁和启动车辆等操作。
 这里我们实现了通过伪造传输数据，恶意控制汽车行为。
-\subsection{蓝牙通信前置知识}
+\subsubsection{蓝牙通信前置知识}
 在将手机与系统正确连接后，蓝牙允许的功能是通过车辆通过仪表板、控制屏幕、方向盘按钮或语音命令完全无线访问手机的呼叫功能。
 蓝牙既是无线标准又是通信协议，使用一套既定的硬件和编码在您的汽车和手机之间来回发送呼叫和数据，安全可靠。
 使用 2.4 GHz 至 2.485 Ghz 的频率，蓝牙硬件以相对较低的功率进行广播——提供仅几英尺（或在某些情况下可达 100 米）的范围，同时节省手机的电池电量并减少暴露于潜在有害辐射.
@@ -58,7 +97,7 @@
     \caption{蓝牙握手协议示意图}
   \end{figure}
 
-\subsection{蓝牙协议配对流程}
+\subsubsection{蓝牙协议配对流程}
 \begin{itemize}
     \item 配对发起者（Initiator，总是Master）和配对的回应者（Responder，总是Slave）可以交换足够的信息，以决定在阶段2使用哪种配对方法、哪种鉴权方式。
     配对方法：LE legacy pairing 和 LE Secure Connections（新方法优先支持）
@@ -69,7 +108,7 @@
 当我们都配置好了就可以手机汽车app抓包了。运行手机汽车互联app就可以被fiddler所截取到数据包了。
 通过检测配对的蓝牙协议中，并未发现使用SMP，所以BLE模块和APP之间并不会进行安全的权鉴, 如图5.6
 \newline
-\subsection{通过蓝牙实现伪装请求攻击}
+\subsubsection{通过蓝牙实现伪装请求攻击}
 具体攻击思路如下\cite{von2021method}:
 \begin{itemize}
     \item 让安卓设备抓取到发送的信息
@@ -107,27 +146,26 @@
 %     \caption{蓝牙协议加密图}
 %   \end{figure}
 
-\section{逆向工程APP和破解请求加密
-}
+\subsection{逆向工程APP和破解请求加密}
 我们通过对 App 进行反编译\cite{yang2015automated}，可以获取车联网APP源码和对应的接口从而伪造请求获取关键代码。
 Android应用程序包（英语：Android application package，APK），是Android操作系统使用的一种应用程序包文件格式，用于分发和安装移动应用及中间件。
 一个APK文件内包含被编译的代码文件(.dex 文件)，文件资源（resources）， assets，证书（certificates），和清单文件（manifest file）。
 
-\subsection{工具准备}
+\subsubsection{工具准备}
 \begin{itemize}
     \item apktool：资源档案，可撷取影像档案及版式档案，供使用者浏览。        
     \item dex2jar：将APK反编译成Java源码（classes.dex转化成jar文件）。
     \item 查看APK中classes.dex转化成出的jar文件，即源码文件 下载apktool、dex2jar、jd-gui，完成后将三个文件放在同一文件中，并解压dex2jar、jd-gui压缩包，这一步是为了方便进行反编译。
 \end{itemize}
 
-\subsection{执行APK反编译}
+\subsubsection{执行APK反编译}
 \begin{figure}
     \centering
     \includegraphics[scale=0.5]{resources/img/i19.png}
     \caption{反编译命令执行行图}
   \end{figure}
 
-  \subsection{获取反编译成功后文件}
+  \subsubsection{获取反编译成功后文件}
   打开对应的文件夹可以看到反编译后生成的文件，在这些生成的文件和文件夹当中，
   我们关心的是res文件夹中和AndroidManifest.xml文件，打开res文件夹，里面存放了我们所关心的xml文件，如图5.8所示：
   \begin{figure}
@@ -146,7 +184,7 @@ Android应用程序包（英语：Android application package，APK），是Andr
     \item res：存放资源文件，例如图片、颜色、字符等。
     \item smali：存放Java编译成的smali代码，smali相当于Android虚拟机上运行的语言。
 \end{itemize}
-\subsection{解析加固APK}
+\subsubsection{解析加固APK}
 （1）APK 加固即通过消除漏洞和增加安全层来“强化”或保护应用程序免受入侵。加壳后的 DEX, Android 虚拟机首先对其进行解密操作，再加载到系统内存中运行。
 其中加壳过程如图 5.9 所示
 在图中，简易的描述了加固的原理，首先我们会拿到一个需要加固的源apk文件，然后需要加固这个源apk，我们就会写一个对应的壳程序，
@@ -155,7 +193,7 @@ Android应用程序包（英语：Android application package，APK），是Andr
 这里说明下什么是Dex文件:
 我们都知道apk的本质是一个压缩包，当我们直接将.apk的后缀改为.zip的时候，是可以直接解压出里面的文件的(甚至有些压缩软件可以直接解压.apk文件，例如bindizip)。那么app为什么能在手机中运行呢，靠的就是.dex文件，
 在Windows端的可执行文件是.exe文件，JVM的可执行文件是.class文件，那么在Android中的dalvik或art虚拟机上运行的可执行文件就是.dex文件。
-\subsection{脱壳加固APK}
+\subsubsection{脱壳加固APK}
 脱壳是把加在软件上的保护程序Dex去掉 直接能看到对应的源码。
 跟java类似，安卓的class都是由Classloader的loadClass方法加载的。跟java不同的是，每一个class对象都会有对应的dex对象属性跟相应的dex文件关联起来。利用xposed，将loadClass方法劫持住，每当loadClass方法调用完成后，用xposed执行后置方法。获取方法加载的class对象，然后调用getDex方法。
 拿到对应的dex文件引用，最后将dex文件序列成byte数据，写到自定义保存文件里面去。就能拿到脱壳后的dex文件。
@@ -173,7 +211,7 @@ Android应用程序包（英语：Android application package，APK），是Andr
   \caption{目标APK加固分析}
 \end{figure}
 
-\subsection{分析关键操作代码}
+\subsubsection{分析关键操作代码}
 \begin{lstlisting}[language=Java,title={获取汽车初始化地理位置代码}]
   private void initLocationStyle() {
     BitmapDescriptor descriptor = BitmapDescriptorFactory.fromResource(R.drawable.main_location_icon);
@@ -260,7 +298,7 @@ Android应用程序包（英语：Android application package，APK），是Andr
 
 }
   \end{lstlisting}
-\subsection{编写远程控制脚本}
+\subsubsection{编写远程控制脚本}
 （1）车辆位置实时追踪。汽车上的导航系统主要依赖 GPS，
 如果天气恶劣，还可以利用内置 SIM卡的无线网络基站进行辅助定位。
 汽车还配备了 SIM卡和导航地图，可以帮助司机在最短的时间里，找到正确的路线。如果有了网络，就可以连接到云端，
@@ -273,7 +311,7 @@ GPS来确认，最终把数据存储到 TSP云端数据存储中。
 需要越权获取车辆经纬度，经纬度可以从 TSP云端数据中通过接口得到，也可以通过调用高德地图 API 获取车辆实时定位。
 最后我们通过pc电脑执行代码远程获取了对应车辆的位置信息和其他身份等更敏感信息。如代码块2所示
 
-\section{流量抓包和远程登录}
+\subsection{流量抓包和远程登录}
 在本节我们通过搭建无线局域网实现APP发送HTTP指令抓包分析, 从而伪造请求参数达到远程向智能网联汽车发出指令的目的。
 首先先说明一下验证用户身份的基本方案: HTTP是一个无状态的协议，那么Web应用要怎么保持用户的登录态呢?
 在验证用户名和密码之后，我们可以发给客户端一个凭证，如果请求中有这个凭证，那么他就是登陆之后的用户。
@@ -350,6 +388,7 @@ TSP一般存在不合理的云身份验证结构，造成用户名泄漏
 使用 MD5、AES等加密算法加密重要的api 密钥等，这样和安全接口的身份凭证相结合能提升接口安全性；
 
 \section{本章小结}
+本章首先通过Isogrash AttackTree 这款软件对商用汽车进行了仿真实验
 本章主要描述针对一款实际商用的汽车进行渗透攻击的实验。先从攻击模型入
 手，在第四章进行威胁建模的基础上，搭建攻击环境；然后进行蓝牙近距离通信伪造操作请求 成功的发送伪造请求 解锁了车辆车门；接着对汽车搭配的远
 程控制 App 进行逆向操作，从汇编源代码中找出重要的逻辑，并以此获取车主个人信息及汽车内部信息和状况;最后我们通过抓包手机互联APP发送的汽车操作HTTP请求获得了登录凭证Token
